@@ -2,15 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FastEndpoints;
+using Routes.Application.Common.Result;
+using Routes.Application.Commands;
 
-namespace Routes.API.Endpoints.Routes.CreateRoute
+namespace Routes.Application.Commands.CreateRoute
 {
-    public record CreateRouteRequest
+    public record CreateRouteCommand : ICommand<Result<CreateRouteResult>>
     {
         public string Name { get; init; } = string.Empty;
         public string Description { get; init; } = string.Empty;
         public decimal BasePrice { get; init; }
         public int DurationDays { get; init; }
-        public List<RouteLocationRequest> Locations { get; init; } = new();
+        public List<RouteLocationCommand> Locations { get; init; } = new();
     }
+
 }

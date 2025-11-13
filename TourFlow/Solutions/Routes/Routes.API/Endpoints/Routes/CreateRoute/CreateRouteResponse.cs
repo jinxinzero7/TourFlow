@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Routes.API.Endpoints.Routes.CreateRoute
 {
-    public class CreateRouteResponse
+    public record CreateRouteResponse
     {
-        public Guid RouteId { get; set; }
-        public string Message { get; set; } = string.Empty;
+        public Guid RouteId { get; init; }
+        public string Message { get; init; } = string.Empty;
     }
 }

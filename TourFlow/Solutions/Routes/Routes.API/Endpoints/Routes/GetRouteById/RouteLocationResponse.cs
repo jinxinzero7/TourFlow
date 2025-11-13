@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Routes.API.Endpoints.Routes.GetRouteById
 {
-    public record GetRouteByIdRequest
+    public record RouteLocationResponse
     {
-        public Guid RouteId { get; init; }
+        public string Location { get; init; } = string.Empty;
+        public int StayDurationDays { get; init; }
     }
 }

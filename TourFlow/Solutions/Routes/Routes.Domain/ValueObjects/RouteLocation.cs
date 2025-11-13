@@ -2,28 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Routes.Domain.Common;
+using Routes.Domain.Entities;
 
 namespace Routes.Domain.ValueObjects
 {
-    public record RouteLocation
+    public class RouteLocation : BaseEntity
     {
-        public string Location { get; init; } = string.Empty;
-        public int StayDurationDays { get; init; }
+        public string Location { get; private set; } = string.Empty;
+        public int StayDurationDays { get; private set; }
 
-        // приватный конструктор
-        private RouteLocation() { }
+        // навигационные свойства для связи с Route
+        public Guid RouteId { get; private set; }
+        public Route Route { get; private set; } = null!;
 
-        // фабричный метод для создания локации
+        // приватный конструктор для EF
+        private RouteLocation() { } 
+
         public static RouteLocation Create(string location, int stayDurationDays)
         {
-            if (string.IsNullOrWhiteSpace(location))
-                throw new ArgumentException("Location cannot be empty");
-            if (stayDurationDays <= 0)
-                throw new ArgumentException("Stay duration must be positive");
-
             return new RouteLocation
             {
-                Location = location.Trim(),
+                Id = Guid.NewGuid(),
+                Location = location,
                 StayDurationDays = stayDurationDays
             };
         }

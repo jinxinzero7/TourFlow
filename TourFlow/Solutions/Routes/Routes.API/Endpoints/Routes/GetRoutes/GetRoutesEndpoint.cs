@@ -1,40 +1,58 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Routes.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using Routes.Application.Queries.GetRoutes;
+using Routes.Application.Common.Result;
 
-namespace Routes.API.Endpoints.Routes.GetRoutes;
-
-public class GetRoutesEndpoint : EndpointWithoutRequest<List<GetRoutesResponse>>
+namespace Routes.API.Endpoints.Routes.GetRoutes
 {
-    private readonly ApplicationDbContext _context;
+    public class GetRoutesEndpoint : Endpoint<GetRoutesRequest, GetRoutesResponse>
+{
+    private readonly ICommandHandler<GetRoutesQuery, Result<GetRoutesResult>> _queryHandler;
 
-    public GetRoutesEndpoint(ApplicationDbContext context)
+    public GetRoutesEndpoint(ICommandHandler<GetRoutesQuery, Result<GetRoutesResult>> queryHandler)
     {
-        _context = context;
+        _queryHandler = queryHandler;
     }
 
-    // метод конфигурации эндпоинта
     public override void Configure()
     {
         Get("/api/routes");
         AllowAnonymous();
+        Description(d => d
+            .WithName("GetRoutes")
+            .Produces<GetRoutesResponse>(200)
+            .ProducesProblem(500));
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(GetRoutesRequest req, CancellationToken ct)
     {
-        var routes = await _context.Routes
-            .Select(r => new GetRoutesResponse
-            {
-                Id = r.Id,
-                Name = r.Name,
-                Description = r.Description,
-                BasePrice = r.BasePrice,
-                DurationDays = r.DurationDays,
-                IsActive = r.IsActive
-            })
-            .ToListAsync(ct);
+        var query = new GetRoutesQuery { OnlyActive = req.OnlyActive };
+        var result = await _queryHandler.ExecuteAsync(query, ct);
 
-        await Send.OkAsync(routes);
+        if (result.IsSuccess)
+        {
+            var response = new GetRoutesResponse
+            {
+                Routes = result.Value.Routes.Select(route => new RouteItemResponse
+                {
+                    Id = route.Id,
+                    Name = route.Name,
+                    Description = route.Description,
+                    BasePrice = route.BasePrice,
+                    DurationDays = route.DurationDays,
+                    IsActive = route.IsActive,
+                    CreatedAt = route.CreatedAt
+                }).ToList(),
+                TotalCount = result.Value.TotalCount
+            };
+
+            await Send.OkAsync(response, ct);
+        }
+        else
+        {
+            AddError(result.Error);
+            await Send.ErrorsAsync(result.StatusCode, ct);        
+        }
     }
+}
 }

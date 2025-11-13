@@ -8,50 +8,37 @@ namespace Routes.Infrastructure.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        public DbSet<Routes.Domain.Entities.Route> Routes => Set<Routes.Domain.Entities.Route>();
+        public DbSet<Route> Routes => Set<Route>();
+        public DbSet<RouteLocation> RouteLocations => Set<RouteLocation>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // конфигурация сущности
-            modelBuilder.Entity<Routes.Domain.Entities.Route>(entity =>
+            modelBuilder.Entity<Route>(entity =>
             {
+                entity.ToTable("Routes");
+
                 entity.HasKey(r => r.Id);
+                entity.Property(r => r.Name).IsRequired().HasMaxLength(100);
+                entity.Property(r => r.Description).HasMaxLength(500);
+                entity.Property(r => r.BasePrice).HasColumnType("decimal(18,2)");
+                entity.Property(r => r.CreatedAt).IsRequired();
+                entity.Property(r => r.UpdatedAt);
 
-                entity.Property(r => r.Name)
-                    .IsRequired()
-                    .HasMaxLength(200);
+                entity.HasMany(r => r.Locations)
+                      .WithOne(rl => rl.Route)
+                      .HasForeignKey(rl => rl.RouteId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
-                entity.Property(r => r.Description)
-                    .HasMaxLength(1000);
+            modelBuilder.Entity<RouteLocation>(entity =>
+            {
+                entity.ToTable("RouteLocations");
 
-                entity.Property(r => r.BasePrice)
-                    .HasPrecision(18, 2);
-
-                entity.Property(r => r.DurationDays)
-                    .IsRequired();
-
-                entity.Property(r => r.CreatedAt)
-                    .IsRequired();
-
-                entity.Property(r => r.IsActive)
-                    .IsRequired();
-
-                // конфиг для owned type value object
-                entity.OwnsMany(r => r.Locations, location =>
-                {
-                    location.WithOwner().HasForeignKey("RouteId");
-                    location.Property<string>("Id").ValueGeneratedOnAdd();
-                    location.HasKey("Id");
-
-                    location.Property(l => l.Location)
-                        .IsRequired()
-                        .HasMaxLength(100);
-
-                    location.Property(l => l.StayDurationDays)
-                        .IsRequired();
-                });
+                entity.HasKey(rl => rl.Id);
+                entity.Property(rl => rl.Location).IsRequired().HasMaxLength(100);
+                entity.Property(rl => rl.StayDurationDays).IsRequired();
             });
         }
     }

@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Routes.API.Endpoints.Routes.GetRouteById
+namespace Routes.Application.Queries.GetRoutes
 {
-    public record GetRouteByIdResponse
+    public record GetRoutesResult
+    {
+        public List<RouteItemResult> Routes { get; init; } = new();
+        public int TotalCount { get; init; }
+    }
+
+    public record RouteItemResult
     {
         public Guid Id { get; init; }
         public string Name { get; init; } = string.Empty;
@@ -14,6 +20,5 @@ namespace Routes.API.Endpoints.Routes.GetRouteById
         public int DurationDays { get; init; }
         public bool IsActive { get; init; }
         public DateTime CreatedAt { get; init; }
-        public List<RouteLocationResponse> Locations { get; init; } = new();
     }
 }
