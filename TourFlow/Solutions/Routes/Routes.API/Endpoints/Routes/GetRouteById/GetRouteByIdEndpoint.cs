@@ -7,13 +7,6 @@ namespace Routes.API.Endpoints.Routes.GetRouteById;
 
 public class GetRouteByIdEndpoint : Endpoint<GetRouteByIdRequest, GetRouteByIdResponse>
 {
-    private readonly ICommandHandler<GetRouteByIdQuery, Result<GetRouteByIdResult>> _queryHandler;
-
-    public GetRouteByIdEndpoint(ICommandHandler<GetRouteByIdQuery, Result<GetRouteByIdResult>> queryHandler)
-    {
-        _queryHandler = queryHandler;
-    }
-
     public override void Configure()
     {
         Get("/api/routes/{RouteId}");
@@ -31,7 +24,7 @@ public class GetRouteByIdEndpoint : Endpoint<GetRouteByIdRequest, GetRouteByIdRe
         {
             RouteId = req.RouteId,
         };
-        var result = await _queryHandler.ExecuteAsync(query, ct);
+        var result = await query.ExecuteAsync(ct);
 
         if (result.IsSuccess)
         {

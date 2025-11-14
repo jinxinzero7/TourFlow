@@ -10,13 +10,6 @@ namespace Routes.API.Endpoints.Routes.DeleteRoute
 {
     public class DeleteRouteEndpoint : Endpoint<DeleteRouteRequest>
     {
-        private readonly ICommandHandler<DeleteRouteCommand, Result<DeleteRouteResult>> _commandHandler;
-
-        public DeleteRouteEndpoint(ICommandHandler<DeleteRouteCommand, Result<DeleteRouteResult>> commandHandler)
-        {
-            _commandHandler = commandHandler;
-        }
-
         public override void Configure()
         {
             Delete("/api/routes/{RouteId}");
@@ -31,7 +24,7 @@ namespace Routes.API.Endpoints.Routes.DeleteRoute
         public override async Task HandleAsync(DeleteRouteRequest req, CancellationToken ct)
         {
             var command = new DeleteRouteCommand { RouteId = req.RouteId };
-            var result = await _commandHandler.ExecuteAsync(command, ct);
+            var result = await command.ExecuteAsync(ct);
 
             if (result.IsSuccess)
             {

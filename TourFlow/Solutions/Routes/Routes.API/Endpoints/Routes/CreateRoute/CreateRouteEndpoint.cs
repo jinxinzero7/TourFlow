@@ -8,13 +8,6 @@ namespace Routes.API.Endpoints.Routes.CreateRoute
 {
     public class CreateRouteEndpoint : Endpoint<CreateRouteRequest, CreateRouteResponse>
     {
-        private readonly ICommandHandler<CreateRouteCommand, Result<CreateRouteResult>> _commandHandler;
-
-        public CreateRouteEndpoint(ICommandHandler<CreateRouteCommand, Result<CreateRouteResult>> commandHandler)
-        {
-            _commandHandler = commandHandler;
-        }
-
         public override void Configure()
         {
             Post("/api/routes");
@@ -41,7 +34,7 @@ namespace Routes.API.Endpoints.Routes.CreateRoute
                 }).ToList()
             };
 
-            var result = await _commandHandler.ExecuteAsync(command, ct);
+            var result = await command.ExecuteAsync(ct);
 
             if (result.IsSuccess)
             {

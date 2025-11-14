@@ -7,13 +7,6 @@ namespace Routes.API.Endpoints.Routes.UpdateRoute
 {
     public class UpdateRouteEndpoint : Endpoint<UpdateRouteRequest, UpdateRouteResponse>
     {
-        private readonly ICommandHandler<UpdateRouteCommand, Result<UpdateRouteResult>> _commandHandler;
-
-        public UpdateRouteEndpoint(ICommandHandler<UpdateRouteCommand, Result<UpdateRouteResult>> commandHandler)
-        {
-            _commandHandler = commandHandler;
-        }
-
         public override void Configure()
         {
             Put("/api/routes/{RouteId}");
@@ -42,7 +35,7 @@ namespace Routes.API.Endpoints.Routes.UpdateRoute
                 }).ToList()
             };
 
-            var result = await _commandHandler.ExecuteAsync(command, ct);
+            var result = await command.ExecuteAsync(ct);
 
             if (result.IsSuccess)
             {
