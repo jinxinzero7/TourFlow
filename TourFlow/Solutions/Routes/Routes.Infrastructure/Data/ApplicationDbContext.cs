@@ -6,41 +6,70 @@ namespace Routes.Infrastructure.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options) { }
 
         public DbSet<Route> Routes => Set<Route>();
-        public DbSet<RouteLocation> RouteLocations => Set<RouteLocation>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            ConfigureRoute(modelBuilder);
+        }
+
+        private void ConfigureRoute(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Route>(entity =>
             {
                 entity.ToTable("Routes");
 
-                entity.HasKey(r => r.Id);
-                entity.Property(r => r.Name).IsRequired().HasMaxLength(100);
-                entity.Property(r => r.Description).HasMaxLength(500);
-                entity.Property(r => r.BasePrice).HasColumnType("decimal(18,2)");
-                entity.Property(r => r.CreatedAt).IsRequired();
+                entity.HasKey(r => r.RouteId);
+
+                entity.Property(r => r.RouteId)
+                    .IsRequired();
+
+                entity.HasIndex(r => r.RouteId)
+                    .IsUnique();
+
+                entity.Property(r => r.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(r => r.Description)
+                    .HasMaxLength(500);
+
+                entity.Property(r => r.BasePrice)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(r => r.CreatedAt)
+                    .IsRequired();
+
                 entity.Property(r => r.UpdatedAt);
 
-                entity.HasMany(r => r.Locations)
-                      .WithOne(rl => rl.Route)
-                      .HasForeignKey(rl => rl.RouteId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
+                entity.OwnsMany(r => r.Locations, b =>
+                {
+                    b.ToTable("RouteLocations");
 
-            modelBuilder.Entity<RouteLocation>(entity =>
-            {
-                entity.ToTable("RouteLocations");
+                    b.WithOwner()
+                     .HasForeignKey("RouteId");
 
-                entity.HasKey(rl => rl.Id);
-                entity.Property(rl => rl.Location).IsRequired().HasMaxLength(100);
-                entity.Property(rl => rl.StayDurationDays).IsRequired();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+                    b.HasKey("Id");
+
+                    b.Property(x => x.Location)
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property(x => x.StayDurationDays)
+                        .IsRequired();
+                });
+
+                entity.Navigation(r => r.Locations)
+                    .UsePropertyAccessMode(PropertyAccessMode.Field);
             });
         }
     }
 }
-

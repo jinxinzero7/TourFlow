@@ -43,7 +43,7 @@ namespace Routes.Application.Commands.CreateRoute
 
                 return Result.Success(new CreateRouteResult
                 {
-                    RouteId = route.Id,
+                    RouteId = route.RouteId,
                     Message = "Route created successfully"
                 });
             }

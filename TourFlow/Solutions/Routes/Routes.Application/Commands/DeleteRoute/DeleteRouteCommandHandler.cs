@@ -33,7 +33,7 @@ namespace Routes.Application.Commands.DeleteRoute
 
                 return Result.Success(new DeleteRouteResult
                 {
-                    RouteId = route.Id,
+                    RouteId = route.RouteId,
                     Message = "Route deleted successfully"
                 });
             }

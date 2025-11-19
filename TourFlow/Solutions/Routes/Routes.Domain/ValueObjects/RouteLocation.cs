@@ -7,14 +7,10 @@ using Routes.Domain.Entities;
 
 namespace Routes.Domain.ValueObjects
 {
-    public class RouteLocation : BaseEntity
+    public class RouteLocation
     {
         public string Location { get; private set; } = string.Empty;
         public int StayDurationDays { get; private set; }
-
-        // навигационные свойства для связи с Route
-        public Guid RouteId { get; private set; }
-        public Route Route { get; private set; } = null!;
 
         // приватный конструктор для EF
         private RouteLocation() { } 
@@ -23,7 +19,6 @@ namespace Routes.Domain.ValueObjects
         {
             return new RouteLocation
             {
-                Id = Guid.NewGuid(),
                 Location = location,
                 StayDurationDays = stayDurationDays
             };

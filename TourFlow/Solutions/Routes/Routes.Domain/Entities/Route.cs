@@ -7,8 +7,9 @@ using Routes.Domain.ValueObjects;
 
 namespace Routes.Domain.Entities
 {
-    public class Route : BaseEntity
+    public class Route
     {
+        public Guid RouteId { get; private set; }
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
         public decimal BasePrice { get; private set; }
@@ -29,7 +30,7 @@ namespace Routes.Domain.Entities
         {
             return new Route
             {
-                Id = Guid.NewGuid(),
+                RouteId = Guid.NewGuid(),
                 Name = name.Trim(),
                 Description = description?.Trim() ?? string.Empty,
                 BasePrice = basePrice,

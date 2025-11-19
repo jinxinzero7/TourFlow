@@ -23,7 +23,7 @@ namespace Routes.Infrastructure.Data.Repositories
             return await _context.Routes
                 .AsNoTracking()
                 .Include(r => r.Locations)
-                .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+                .FirstOrDefaultAsync(r => r.RouteId == id, cancellationToken);
         }
 
         public async Task<List<Route>> GetAllAsync(CancellationToken cancellationToken = default)

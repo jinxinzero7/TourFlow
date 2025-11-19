@@ -18,11 +18,6 @@ namespace Routes.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddScoped<ICommandHandler<CreateRouteCommand, Result<CreateRouteResult>>, CreateRouteCommandHandler>();
-            services.AddScoped<ICommandHandler<UpdateRouteCommand, Result<UpdateRouteResult>>, UpdateRouteCommandHandler>();
-            services.AddScoped<ICommandHandler<DeleteRouteCommand, Result<DeleteRouteResult>>, DeleteRouteCommandHandler>();
-            services.AddScoped<ICommandHandler<GetRouteByIdQuery, Result<GetRouteByIdResult>>, GetRouteByIdQueryHandler>();
-            services.AddScoped<ICommandHandler<GetRoutesQuery, Result<GetRoutesResult>>, GetRoutesQueryHandler>();
             return services;
         }
     }

@@ -39,12 +39,11 @@ namespace Routes.Application.Commands.UpdateRoute
                     route.AddLocation(location.Location, location.StayDurationDays);
                 }
 
-                await _routeRepository.UpdateAsync(route, cancellationToken);
                 await _routeRepository.SaveChangesAsync(cancellationToken);
 
                 return Result.Success(new UpdateRouteResult
                 {
-                    RouteId = route.Id,
+                    RouteId = route.RouteId,
                     Message = "Route updated successfully"
                 });
             }

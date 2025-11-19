@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Routes.Infrastructure.Data.Migrations
+namespace Routes.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -15,7 +16,7 @@ namespace Routes.Infrastructure.Data.Migrations
                 name: "Routes",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RouteId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     BasePrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
@@ -26,14 +27,15 @@ namespace Routes.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Routes", x => x.Id);
+                    table.PrimaryKey("PK_Routes", x => x.RouteId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "RouteLocations",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Location = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     StayDurationDays = table.Column<int>(type: "integer", nullable: false),
                     RouteId = table.Column<Guid>(type: "uuid", nullable: false)
@@ -45,7 +47,7 @@ namespace Routes.Infrastructure.Data.Migrations
                         name: "FK_RouteLocations_Routes_RouteId",
                         column: x => x.RouteId,
                         principalTable: "Routes",
-                        principalColumn: "Id",
+                        principalColumn: "RouteId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -53,6 +55,12 @@ namespace Routes.Infrastructure.Data.Migrations
                 name: "IX_RouteLocations_RouteId",
                 table: "RouteLocations",
                 column: "RouteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Routes_RouteId",
+                table: "Routes",
+                column: "RouteId",
+                unique: true);
         }
 
         /// <inheritdoc />

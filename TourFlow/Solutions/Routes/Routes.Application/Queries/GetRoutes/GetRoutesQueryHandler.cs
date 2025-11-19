@@ -40,7 +40,7 @@ namespace Routes.Application.Queries.GetRoutes
                 {
                     Routes = routes.Select(route => new RouteItemResult
                     {
-                        Id = route.Id,
+                        Id = route.RouteId,
                         Name = route.Name,
                         Description = route.Description,
                         BasePrice = route.BasePrice,

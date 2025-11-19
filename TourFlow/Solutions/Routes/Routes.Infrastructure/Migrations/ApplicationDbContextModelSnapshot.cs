@@ -8,7 +8,7 @@ using Routes.Infrastructure.Data;
 
 #nullable disable
 
-namespace Routes.Infrastructure.Data.Migrations
+namespace Routes.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -24,7 +24,7 @@ namespace Routes.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Routes.Domain.Entities.Route", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("RouteId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -53,48 +53,45 @@ namespace Routes.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("RouteId");
+
+                    b.HasIndex("RouteId")
+                        .IsUnique();
 
                     b.ToTable("Routes", (string)null);
                 });
 
-            modelBuilder.Entity("Routes.Domain.ValueObjects.RouteLocation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid>("RouteId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("StayDurationDays")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RouteId");
-
-                    b.ToTable("RouteLocations", (string)null);
-                });
-
-            modelBuilder.Entity("Routes.Domain.ValueObjects.RouteLocation", b =>
-                {
-                    b.HasOne("Routes.Domain.Entities.Route", "Route")
-                        .WithMany("Locations")
-                        .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Route");
-                });
-
             modelBuilder.Entity("Routes.Domain.Entities.Route", b =>
                 {
+                    b.OwnsMany("Routes.Domain.ValueObjects.RouteLocation", "Locations", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Location")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
+
+                            b1.Property<Guid>("RouteId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("StayDurationDays")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("RouteId");
+
+                            b1.ToTable("RouteLocations", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("RouteId");
+                        });
+
                     b.Navigation("Locations");
                 });
 #pragma warning restore 612, 618

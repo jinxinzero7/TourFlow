@@ -30,7 +30,7 @@ namespace Routes.Application.Queries.GetRouteById
 
                 var result = new GetRouteByIdResult
                 {
-                    Id = route.Id,
+                    Id = route.RouteId,
                     Name = route.Name,
                     Description = route.Description,
                     BasePrice = route.BasePrice,
